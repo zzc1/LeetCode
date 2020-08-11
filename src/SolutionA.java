@@ -771,31 +771,149 @@ public class SolutionA {
 
 
     public int numUniqueEmails(String[] emails) {
-        HashSet<String> set=new HashSet<>();
-        for(String email:emails){
-            int index=email.indexOf('@');
-            String local=email.substring(0,index);
-            String reset=email.substring(index);
-            if(local.contains("+")){
-                local=local.substring(0,local.indexOf('+'));
+        HashSet<String> set = new HashSet<>();
+        for (String email : emails) {
+            int index = email.indexOf('@');
+            String local = email.substring(0, index);
+            String reset = email.substring(index);
+            if (local.contains("+")) {
+                local = local.substring(0, local.indexOf('+'));
             }
-            local=local.replaceAll("\\.","");
-            set.add(local+reset);
+            local = local.replaceAll("\\.", "");
+            set.add(local + reset);
         }
         return set.size();
     }
+
+    public int countBinarySubstrings(String s) {
+        int znum = 0, onum = 0, zlf = -1, cur = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '0') {
+                if (zlf == 0) {
+                    if (onum > 0) {
+                        znum = 1;
+                        zlf = 1;
+                    } else {
+                        znum++;
+                        zlf = 0;
+                    }
+                } else {
+                    znum++;
+                    zlf = 1;
+                }
+            } else {
+                if (zlf == 0) {
+                    onum++;
+                    zlf = 0;
+                } else {
+                    if (znum == 0)
+                        onum++;
+                    else
+                        onum = 1;
+                    zlf = 0;
+                }
+            }
+            if ((zlf == 0 && onum <= znum) || (zlf == 1 && znum <= onum))
+                cur++;
+//            System.out.println(znum+"　"+onum+" "+zlf);
+        }
+        return cur;
+    }
+
+//    laotimole
+
+    public int findPoisonedDuration(int[] timeSeries, int duration) {
+        int sum = 0, end = 0;
+        for (int i = 0; i < timeSeries.length; i++) {
+            if (timeSeries[i] < end) {
+                sum += timeSeries[i] + duration - end;
+            } else {
+                sum += duration;
+            }
+            end = timeSeries[i] + duration;
+        }
+        return sum;
+    }
+
+    int[] mincost;
+    HashSet<Integer> daySet;
+    int[] cost;
+    public int mincostTickets(int[] days, int[] costs) {
+            mincost=new int[366];
+            daySet=new HashSet<>();
+            cost=costs;
+            for(int i=0;i<days.length;i++){
+                daySet.add(days[i]);
+            }
+            return minTic(1);
+    }
+
+
+    int minTic(int i){
+        if(i>365){
+            return 0;
+        }
+        if(mincost[i]!=0)
+            return mincost[i];
+        if(!daySet.contains(i)){
+            mincost[i]=Math.min(minTic(i+1)+cost[0],Math.max(minTic(i+7)+cost[1],minTic(i+30)+cost[2]));
+        }else {
+            mincost[i]=mincost[i+1];
+        }
+        return mincost[i];
+    }
+
+
+
+    int[][] visit;
+    int[][] dir={{1,0},{0,1},{-1,0},{0,-1}};
+    public void solve(char[][] board) {
+        for(int i=0;i<board[0].length;i++) {
+            if (board[0][i] == 'O' || board[board.length - 1][i] == 'O') {
+                visit[0][i] = -1;
+                sbaow(0, i, board);
+            }
+        }
+        for(int i=1;i<board.length-1;i++){
+            if(board[i][0]=='O'||board[i][board[0].length-1]=='O'){
+                visit[0][i]=-1;
+                sbaow(0,i,board);
+            }
+        }
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[0].length;j++){
+                if(board[i][j]=='O'&&visit[i][j]!=-1)
+                    board[i][j]='X';
+            }
+        }
+        return;
+    }
+
+
+    public  void sbaow(int x,int y,char[][] board){
+        for(int i=0;i<4;i++){
+            int nx=x+dir[i][0];
+            int ny=y+dir[i][1];
+            if(visit[nx][ny]==0&&nx>=0&&ny<board.length&&ny>=0&&ny<board[0].length&&board[nx][ny]=='O'){
+                visit[nx][ny]=-1;
+                sbaow(nx,ny,board);
+            }
+        }
+        return;
+    }
+
     public static void main(String[] args) {
         SolutionA solution = new SolutionA();
 //      solution.numSplits("acbadbaada");
-        String[] maze = {"S#O",
-                "M.T",
-                "M.."};
-        String[] maze1 = {"...O.",
-                ".S#M.",
-                "..#T.",
-                "....."};
-        String[] maze3 = {".MM..", "#..M.", ".#..#", "..O..", ".S.OM", ".#M#T", "###..", "....."};
-        System.out.println(solution.minimalSteps(maze3));
+//        String[] maze = {"S#O",
+//                "M.T",
+//                "M.."};
+//        String[] maze1 = {"...O.",
+//                ".S#M.",
+//                "..#T.",
+//                "....."};
+//        String[] maze3 = {".MM..", "#..M.", ".#..#", "..O..", ".S.OM", ".#M#T", "###..", "....."};
+//        System.out.println(solution.minimalSteps(maze3));
 //            ListNode headA = new ListNode(1);
 //            ListNode headB = headA;
 //        solution.getIntersectionNode(headA, headB);
@@ -803,5 +921,8 @@ public class SolutionA {
 //            char[] letters = {'c', 'f', 'j'};
 //        solution.fraction(a);
 //            solution.nextGreatestLetter(letters, 'j');
+        int[] time = {1, 2, 2};
+        int dur = 2;
+        System.out.println(solution.findPoisonedDuration(time, dur));
     }
 }
