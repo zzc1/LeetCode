@@ -901,6 +901,68 @@ public class SolutionA {
         }
         return;
     }
+    int[] visitf;
+    int loop;
+    HashMap<Integer,ArrayList<Integer>> hashMapf;
+    HashMap<String,Integer> order;
+    public int[] findRedundantConnection(int[][] edges) {
+        visitf=new int[1010];
+        hashMapf=new HashMap<>();
+        order=new HashMap<>();
+        for(int i=0;i<edges.length;i++){
+            int u=edges[i][0],v=edges[i][1];
+            if(hashMapf.containsKey(u)){
+                hashMapf.get(u).add(v);
+            }else {
+                ArrayList<Integer> list=new ArrayList<>();
+                list.add(v);
+                hashMapf.put(u,list);
+            }
+            order.put(""+edges[0][0]+"."+edges[i][1]+"",i);
+        }
+        visitf[edges[0][0]]=1;
+        ArrayList<Integer> list=sear(new ArrayList<>(),edges[0][0]);
+        int u = 0,v=0;
+        for(int i=0;i<list.size();i++){
+            if(list.get(i)==loop){
+                int minorder=Integer.MIN_VALUE;
+                while (i<list.size()-1){
+                    u=list.get(i);
+                    v=list.get(i+1);
+                    if(u>v){
+                        int tmp=u;
+                        u=v;
+                        v=tmp;
+                    }
+                    int o=order.get(""+u+"."+v+"");
+                    if(o>minorder)
+                        minorder=o;
+                }
+                break;
+            }
+        }
+        return new int[]{u,v};
+    }
+
+    public ArrayList<Integer> sear(ArrayList<Integer> list,int i){
+        list.add(i);
+        ArrayList<Integer> arrayList=hashMapf.get(i);
+        for(Integer x:arrayList){
+            if(visitf[x]==1) {
+                loop=x;
+                list.add(x);
+                return list;
+            }
+            else{
+                visitf[i]=1;
+                sear(list,x);
+            }
+        }
+        list.remove(i);
+        return null;
+    }
+
+
 
     public static void main(String[] args) {
         SolutionA solution = new SolutionA();
