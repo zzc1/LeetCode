@@ -45,17 +45,27 @@ public class SolutionB {
 
     HashMap<Integer, ArrayList<Integer>> hashMap;
     HashMap<Integer, Node> nodeHashMap;
+    HashSet<Integer> isvi;
 
     public Node cloneGraph(Node node) {
+        if(node==null)
+            return null;
         Queue<Node> queue = new LinkedList<>();
+        hashMap=new HashMap<>();
+        nodeHashMap=new HashMap<>();
+        isvi = new HashSet<>();
         queue.add(node);
         while (!queue.isEmpty()) {
             Node head = queue.poll();
+            isvi.add(head.val);
             if (!hashMap.containsKey(head.val))
                 hashMap.put(head.val, new ArrayList<>());
             for (Node node1 : head.neighbors) {
-                queue.add(node1);
-                hashMap.get(head.val).add(node1.val);
+                if (!isvi.contains(node1.val)) {
+                    queue.add(node1);
+                    isvi.add(node1.val);
+                    hashMap.get(head.val).add(node1.val);
+                }
             }
         }
         Set<Map.Entry<Integer, ArrayList<Integer>>> entrySet = hashMap.entrySet();
@@ -65,8 +75,10 @@ public class SolutionB {
         }
         for (Map.Entry<Integer, ArrayList<Integer>> entry : entrySet) {
             Node nodet = nodeHashMap.get(entry.getKey());
-            for (Integer integer : entry.getValue())
+            for (Integer integer : entry.getValue()) {
                 nodet.neighbors.add(nodeHashMap.get(integer));
+                nodeHashMap.get(integer).neighbors.add(nodet);
+            }
         }
         return nodeHashMap.get(node.val);
     }
@@ -95,7 +107,7 @@ public class SolutionB {
 
         @Override
         public int hashCode() {
-            return x*y + 16*x + 21*y;
+            return x * y + 16 * x + 21 * y;
         }
     }
 
@@ -145,52 +157,52 @@ public class SolutionB {
 
 
     public boolean isPossibleDivide(int[] nums, int k) {
-        Map<Integer,Integer> map=new TreeMap<>();
-        for(int i=0;i<nums.length;i++){
-            if(map.containsKey(nums[i]))
-                map.put(nums[i],map.get(nums[i])+1);
+        Map<Integer, Integer> map = new TreeMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i]))
+                map.put(nums[i], map.get(nums[i]) + 1);
             else
-                map.put(nums[i],1);
+                map.put(nums[i], 1);
         }
-        Set<Map.Entry<Integer,Integer>> set=map.entrySet();
-        int[][] count=new int[set.size()][2];
-        int j=0;
-        for(Map.Entry<Integer,Integer> entry:set){
-            count[j][0]=entry.getKey();
-            count[j][1]=entry.getValue();
+        Set<Map.Entry<Integer, Integer>> set = map.entrySet();
+        int[][] count = new int[set.size()][2];
+        int j = 0;
+        for (Map.Entry<Integer, Integer> entry : set) {
+            count[j][0] = entry.getKey();
+            count[j][1] = entry.getValue();
             j++;
         }
-        for(int i=0;i<j;i++){
-            int start=count[i][0];
-            int len=count[i][1];
-            int m=0;
-            int nexti=0;
-            boolean flag=false;
-            if(len==0)
+        for (int i = 0; i < j; i++) {
+            int start = count[i][0];
+            int len = count[i][1];
+            int m = 0;
+            int nexti = 0;
+            boolean flag = false;
+            if (len == 0)
                 continue;
-            while(m<k-1){
-                int cur=i+m+1;
-                if(cur>=j)
+            while (m < k - 1) {
+                int cur = i + m + 1;
+                if (cur >= j)
                     return false;
-                int curn=count[cur][0];
-                int curlen=count[cur][1];
-                if(curn!=start+m+1)
+                int curn = count[cur][0];
+                int curlen = count[cur][1];
+                if (curn != start + m + 1)
                     return false;
-                else{
-                    if(curlen<len)
+                else {
+                    if (curlen < len)
                         return false;
-                    else{
-                        count[cur][1]-=len;
-                        if(count[cur][1]!=0&&flag==false){
-                            flag=true;
-                            nexti=cur;
+                    else {
+                        count[cur][1] -= len;
+                        if (count[cur][1] != 0 && flag == false) {
+                            flag = true;
+                            nexti = cur;
                         }
                     }
                 }
                 m++;
             }
-            if(flag==true)
-                i=nexti-1;
+            if (flag == true)
+                i = nexti - 1;
         }
         return true;
     }
@@ -253,16 +265,111 @@ public class SolutionB {
     }
 
     public TreeNode sortedListToBST(ListNode head) {
-        return null;
+        ListNode lead = head;
+        List<Integer> list = new ArrayList<>();
+        while (lead != null) {
+            list.add(lead.val);
+            lead = lead.next;
+        }
+        return createBST(0, list.size() - 1, list);
+//        return null;
     }
+
+    public TreeNode createBST(int start, int end, List<Integer> list) {
+        if (start == end)
+            return new TreeNode(list.get(start));
+        int mid = start + (end - start) / 2;
+        TreeNode root = new TreeNode(list.get(mid));
+        root.left = createBST(start, mid - 1, list);
+        root.right = createBST(mid + 1, end, list);
+        return root;
+    }
+
+
+    public int countSubstrings(String s) {
+        int res = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int left = i, right = i;
+            while (left >= 0 && right < s.length()) {
+                if (s.charAt(left) == s.charAt(right)) {
+                    res++;
+                    left--;
+                    right++;
+                } else {
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    TreeNode cloTarget;
+
+    public final TreeNode getTargetCopy(final TreeNode original, final TreeNode cloned, final TreeNode target) {
+        dfsTree(original, cloned, target);
+        return cloTarget;
+    }
+
+    public void dfsTree(TreeNode original, TreeNode cloned, TreeNode target) {
+        if (original == null)
+            return;
+        if (original == target) {
+            cloTarget = cloned;
+            return;
+        }
+        dfsTree(original.left, cloned.left, target);
+        dfsTree(original.right, cloned.right, target);
+    }
+
+
+    public class Codec {
+
+        // Encodes a URL to a shortened URL.
+        public String encode(String longUrl) {
+
+        }
+
+        // Decodes a shortened URL to its original URL.
+        public String decode(String shortUrl) {
+
+        }
+    }
+
+    int minDepth = Integer.MAX_VALUE;
+
+    public int minDepth(TreeNode root) {
+        if (root == null)
+            return 0;
+        preOr(root, 1);
+        return minDepth;
+    }
+
+    public void preOr(TreeNode root, int k) {
+        if (root == null)
+            return;
+        if (root.left == null && root.right == null) {
+            if (k < minDepth) {
+                minDepth = k;
+            }
+            return;
+        }
+        preOr(root.left, k + 1);
+        preOr(root.right, k + 1);
+    }
+
+
+    public boolean repeatedSubstringPattern(String s) {
+        return (s+s).indexOf(s,1)!=s.length();
+    }
+
 
 
     public static void main(String[] args) {
         SolutionB solutionB = new SolutionB();
 //        for (int i = 1; i <= 8; i++)
 //            System.out.println(solutionB.kthGrammar(4, i));
-        int[] nums={0,1,1,2,2,3,3,4,5,6,7,8};
-        System.out.println(solutionB.isPossibleDivide(nums,3));
+        int[] nums = {0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8};
+        System.out.println(solutionB.isPossibleDivide(nums, 3));
     }
 
 
