@@ -76,7 +76,6 @@ public class IsNumber {
         int[][] increase = {{2, 8, 4}, {2, 5, 0}, {10, 9, 8}};
         int[][] requirements = {{2, 11, 3}, {15, 10, 7}, {9, 17, 12}, {8, 1, 14}};
         isNumber.getTriggerTime(increase, requirements);
-
     }
 }
 

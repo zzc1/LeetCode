@@ -10,36 +10,6 @@ public class TwoPartGraph {
     boolean res=true;
 
     public boolean isBipartite(int[][] graph) {
-
-//        for(int i=0;i<graph.length;i++){
-//            if(!hashMap.containsKey(i)){
-//                boolean is_break=false;
-//                for (int j=0;j<graph[i].length;j++){
-//                    if(hashMap.containsKey(graph[i][j])){
-//                        int color_in =hashMap.get(graph[i][j]);
-//                        hashMap.put(i,color_in==COLOR_WHITLE?COLOR_BLACK:COLOR_WHITLE);
-//                        is_break=true;
-//                        break;
-//                    }
-//                }
-//                if(!is_break)
-//                    hashMap.put(i,COLOR_WHITLE);
-//            }
-//            int color=hashMap.get(i);
-//            for(int j=0;j<graph[i].length;j++){
-//                if(!hashMap.containsKey(graph[i][j])){
-//                    hashMap.put(graph[i][j],color==COLOR_WHITLE?COLOR_BLACK:COLOR_WHITLE);
-//                }else {
-//                    if(color==hashMap.get(graph[i][j])){
-//                        return false;
-//                    }
-//                }
-//            }
-//
-//        }
-//
-//        return true;
-
         for(int i=0;i<graph.length;i++){
             if(vis[i]==0) {
                 vis[i]=1;

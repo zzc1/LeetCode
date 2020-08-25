@@ -48,11 +48,11 @@ public class SolutionB {
     HashSet<Integer> isvi;
 
     public Node cloneGraph(Node node) {
-        if(node==null)
+        if (node == null)
             return null;
         Queue<Node> queue = new LinkedList<>();
-        hashMap=new HashMap<>();
-        nodeHashMap=new HashMap<>();
+        hashMap = new HashMap<>();
+        nodeHashMap = new HashMap<>();
         isvi = new HashSet<>();
         queue.add(node);
         while (!queue.isEmpty()) {
@@ -322,18 +322,18 @@ public class SolutionB {
     }
 
 
-    public class Codec {
-
-        // Encodes a URL to a shortened URL.
-        public String encode(String longUrl) {
-
-        }
-
-        // Decodes a shortened URL to its original URL.
-        public String decode(String shortUrl) {
-
-        }
-    }
+//    public class Codec {
+//
+//        // Encodes a URL to a shortened URL.
+//        public String encode(String longUrl) {
+//
+//        }
+//
+//        // Decodes a shortened URL to its original URL.
+//        public String decode(String shortUrl) {
+//
+//        }
+//    }
 
     int minDepth = Integer.MAX_VALUE;
 
@@ -359,17 +359,54 @@ public class SolutionB {
 
 
     public boolean repeatedSubstringPattern(String s) {
-        return (s+s).indexOf(s,1)!=s.length();
+        return (s + s).indexOf(s, 1) != s.length();
     }
 
+    List<List<Integer>> subs_incr;
+    HashSet<List<Integer>> set;
+
+    public List<List<Integer>> findSubsequences(int[] nums) {
+        subs_incr = new ArrayList<>();
+        set = new HashSet<>();
+        findSub_dfs(0, nums, new ArrayList<>());
+        return subs_incr;
+    }
+
+
+    public void findSub_dfs(int k, int[] nums, List<Integer> list) {
+        if (!set.contains(list) && list.size() > 1) {
+            List<Integer> curlist=new ArrayList<>(list);
+            subs_incr.add(curlist);
+            set.add(curlist);
+        }
+        if(k==nums.length)
+            return;
+        int len = list.size();
+        if (len == 0 || nums[k] >= list.get(len - 1)) {
+            //findSub_dfs(k + 1, nums, list);
+            list.add(nums[k]);
+            findSub_dfs(k + 1, nums, list);
+            list.remove(len);
+            findSub_dfs(k + 1, nums, list);
+        }
+        return;
+    }
 
 
     public static void main(String[] args) {
         SolutionB solutionB = new SolutionB();
 //        for (int i = 1; i <= 8; i++)
 //            System.out.println(solutionB.kthGrammar(4, i));
-        int[] nums = {0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8};
-        System.out.println(solutionB.isPossibleDivide(nums, 3));
+        int[] nums = {100,90,80,70,60,50,60,70,80,90,100};
+        //    System.out.println(solutionB.isPossibleDivide(nums, 3));
+        List<List<Integer>> subs_incr = solutionB.findSubsequences(nums);
+        for (List<Integer> list : subs_incr) {
+            for (Integer i : list) {
+                System.out.print(i + " ");
+            }
+            System.out.print("\n");
+        }
+
     }
 
 
