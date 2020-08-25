@@ -375,11 +375,11 @@ public class SolutionB {
 
     public void findSub_dfs(int k, int[] nums, List<Integer> list) {
         if (!set.contains(list) && list.size() > 1) {
-            List<Integer> curlist=new ArrayList<>(list);
+            List<Integer> curlist = new ArrayList<>(list);
             subs_incr.add(curlist);
             set.add(curlist);
         }
-        if(k==nums.length)
+        if (k == nums.length)
             return;
         int len = list.size();
         if (len == 0 || nums[k] >= list.get(len - 1)) {
@@ -388,24 +388,63 @@ public class SolutionB {
             findSub_dfs(k + 1, nums, list);
             list.remove(len);
             findSub_dfs(k + 1, nums, list);
+        } else {
+            findSub_dfs(k + 1, nums, list);
         }
         return;
     }
 
+    int[] statisround;
+
+    public List<Integer> mostVisited(int n, int[] rounds) {
+        statisround = new int[101];
+        statisround[rounds[0]]++;
+        for(int i=1;i<rounds.length;i++){
+            int start=rounds[i-1]==n?1:rounds[i-1]+1;
+            int end=rounds[i];
+            while(start!=end){
+                statisround[start]++;
+                start=start==n?1:start+1;
+            }
+            statisround[end]++;
+        }
+        int Max=Integer.MIN_VALUE;
+        for(int i=1;i<=n;i++){
+            System.out.println(statisround[i]);
+            if(statisround[i]>Max)
+                Max=statisround[i];
+        }
+        List<Integer> list=new ArrayList<>();
+        for(int i=1;i<=n;i++){
+            if(statisround[i]==Max)
+                list.add(i);
+        }
+        return list;
+    }
+
+    public int maxCoins(int[] piles) {
+        Arrays.sort(piles);
+        int sum=0;
+        for(int i=piles.length-2;i>=piles.length-piles.length/3*2;i-=2)
+            sum+=piles[i];
+        return sum;
+    }
 
     public static void main(String[] args) {
         SolutionB solutionB = new SolutionB();
 //        for (int i = 1; i <= 8; i++)
 //            System.out.println(solutionB.kthGrammar(4, i));
-        int[] nums = {100,90,80,70,60,50,60,70,80,90,100};
+//        int[] nums = {100, 90, 80, 70, 60, 50, 60, 70, 80, 90, 100};
         //    System.out.println(solutionB.isPossibleDivide(nums, 3));
-        List<List<Integer>> subs_incr = solutionB.findSubsequences(nums);
-        for (List<Integer> list : subs_incr) {
-            for (Integer i : list) {
-                System.out.print(i + " ");
-            }
-            System.out.print("\n");
-        }
+//        List<List<Integer>> subs_incr = solutionB.findSubsequences(nums);
+//        for (List<Integer> list : subs_incr) {
+//            for (Integer i : list) {
+//                System.out.print(i + " ");
+//            }
+//            System.out.print("\n");
+//        }
+        int[] nums={1,3,5,7};
+        solutionB.mostVisited(7,nums);
 
     }
 
